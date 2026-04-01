@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DDR Report — UrbanRoof</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    a { color: inherit; }
+
+    /* ── Page wrapper ── */
+    .page {
+      max-width: 960px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    }
+
+    /* ── Header / Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1d4ed8 100%);
+      color: white;
+      padding: 44px 48px 36px;
+    }
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-box {
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+    .company-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .company-tag {
+      font-size: 0.78rem;
+      opacity: 0.7;
+      letter-spacing: 0.5px;
+    }
+    .report-meta {
+      text-align: right;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    .report-meta strong { display: block; font-size: 1rem; opacity: 1; }
+
+    .hero h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+    .hero p {
+      opacity: 0.75;
+      font-size: 0.92rem;
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin-top: 28px;
+      padding-top: 20px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      padding: 0 16px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      opacity: 0.65;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Body content ── */
+    .body { padding: 40px 48px; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 44px; }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-num {
+      background: #1e3a8a;
+      color: white;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Summary bullets ── */
+    .summary-list {
+      list-style: none;
+      padding: 0;
+    }
+    .summary-list li {
+      padding: 10px 14px 10px 42px;
+      margin-bottom: 8px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 3px solid #1d4ed8;
+      position: relative;
+      line-height: 1.6;
+    }
+    .summary-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 16px;
+      color: #1d4ed8;
+      font-weight: bold;
+    }
+
+    /* ── Area cards ── */
+    .area-card {
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+    }
+    .area-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .area-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .severity-badge {
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .area-section {
+      margin-bottom: 12px;
+    }
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .area-section ul {
+      padding-left: 18px;
+    }
+    .area-section ul li {
+      margin-bottom: 4px;
+      color: #334155;
+    }
+    .thermal-box {
+      background: rgba(255,255,255,0.5);
+      border-radius: 6px;
+      padding: 10px 14px;
+    }
+    .image-note {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* ── Root cause ── */
+    .root-cause-box {
+      background: #fefce8;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 18px 20px;
+      line-height: 1.8;
+      color: #1e293b;
+    }
+
+    /* ── Priority matrix ── */
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .priority-grid { grid-template-columns: 1fr; }
+    }
+    .priority-col {
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .priority-col.high   { background:#fff1f1; border:1px solid #fca5a5; }
+    .priority-col.medium { background:#fffbeb; border:1px solid #fde68a; }
+    .priority-col.low    { background:#f0fdf4; border:1px solid #bbf7d0; }
+    .priority-heading {
+      font-weight: 800;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+    }
+    .priority-col.high   .priority-heading { color:#dc2626; }
+    .priority-col.medium .priority-heading { color:#d97706; }
+    .priority-col.low    .priority-heading { color:#16a34a; }
+    .priority-col ul {
+      list-style: none;
+      padding: 0;
+    }
+    .priority-col ul li {
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+      padding-left: 20px;
+      position: relative;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .dot {
+      position: absolute;
+      left: 0;
+      font-size: 0.7rem;
+    }
+
+    /* ── Action plan ── */
+    .action-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+    .step-num {
+      background: #1e3a8a;
+      color: white;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .step-text {
+      padding-top: 4px;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    /* ── Additional insights ── */
+    .insights-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #3b82f6;
+      border-radius: 8px;
+      padding: 18px 20px;
+      line-height: 1.8;
+      color: #1e293b;
+    }
+
+    /* ── Missing data ── */
+    .missing-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-left: 4px solid #f97316;
+      border-radius: 8px;
+      padding: 18px 20px;
+      line-height: 1.8;
+      color: #1e293b;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: #0f172a;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 20px 48px;
+      font-size: 0.8rem;
+      letter-spacing: 0.3px;
+    }
+    .footer strong { color: rgba(255,255,255,0.8); }
+
+    .na { color: #94a3b8; font-style: italic; }
+
+    @media print {
+      .page { box-shadow: none; margin: 0; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════════════════════ HERO HEADER -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="logo-area">
+        <div class="logo-box">🏗️</div>
+        <div>
+          <div class="company-name">UrbanRoof</div>
+          <div class="company-tag">Building Diagnostics & Inspection</div>
+        </div>
+      </div>
+      <div class="report-meta">
+        <strong>Detailed Diagnostic Report</strong>
+        Date: 01 April 2026
+      </div>
+    </div>
+    <h1>Detailed Diagnostic Report (DDR)</h1>
+    <p>AI-assisted analysis based on Inspection Report and Thermal Imaging data</p>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-num">23</span>
+        <span class="stat-label">Inspection Pages</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">30</span>
+        <span class="stat-label">Thermal Pages</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">5551</span>
+        <span class="stat-label">Images Extracted</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Areas Analysed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ BODY -->
+  <div class="body">
+
+    <!-- 1. Property Issue Summary -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">1</span>
+        Property Issue Summary
+      </div>
+      <ul class="summary-list">
+        <li>Widespread dampness at skirting levels in multiple areas, including Hall, Bedroom, Kitchen, and Master Bedroom, indicating potential water seepage or leakage issues.</li>
+<li>Gaps between tile joints and loose plumbing joints observed in Common Bathroom and Master Bedroom Bathroom, suggesting concealed plumbing issues.</li>
+<li>Cracks on the External wall near Master Bedroom, potentially due to structural stress or water damage.</li>
+<li>Leakage at the Parking ceiling below Flat No. 103, possibly caused by water seepage from the roof or upper floors.</li>
+<li>Mild dampness at the ceiling of Common Bathroom, which may be related to the observed plumbing issues or roof leakage.</li>
+
+      </ul>
+    </div>
+
+    <!-- 2. Area-wise Analysis -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">2</span>
+        Area-wise Analysis
+      </div>
+      
+        <div class="area-card" style="border-left:4px solid #f59e0b; background:#fffbeb">
+          <div class="area-header">
+            <h3 class="area-name">📍 Hall</h3>
+            <span class="severity-badge" style="background:#f59e0b">Medium</span>
+          </div>
+
+          <div class="area-section">
+            <p class="section-label">🔍 Observed Issues</p>
+            <ul><li>Dampness at skirting level</li></ul>
+          </div>
+
+          <div class="area-section thermal-box">
+            <p class="section-label">🌡️ Thermal Evidence</p>
+            <p>Not Available</p>
+          </div>
+
+          <div class="area-section">
+            <p class="section-label">⚠️ Severity Reason</p>
+            <p>Dampness can lead to further damage if not addressed, but its current impact is relatively limited.</p>
+          </div>
+
+          <div class="area-section image-note">
+            <p class="section-label">🖼️ Images</p>
+            <p>Not Available</p>
+          </div>
+        </div>
+        
+        <div class="area-card" style="border-left:4px solid #ef4444; background:#fff1f1">
+          <div class="area-header">
+            <h3 class="area-name">📍 Common Bathroom</h3>
+            <span class="severity-badge" style="background:#ef4444">High</span>
+          </div>
+
+          <div class="area-section">
+            <p class="section-label">🔍 Observed Issues</p>
+            <ul><li>Gaps between tile joints</li><li>Loose plumbing joints</li></ul>
+          </div>
+
+          <div class="area-section thermal-box">
+            <p class="section-label">🌡️ Thermal Evidence</p>
+            <p>Not Available</p>
+          </div>
+
+          <div class="area-section">
+            <p class="section-label">⚠️ Severity Reason</p>
+            <p>These issues can lead to significant water damage and health concerns if not immediately addressed.</p>
+          </div>
+
+          <div class="area-section image-note">
+            <p class="section-label">🖼️ Images</p>
+            <p>Not Available</p>
+          </div>
+        </div>
+        
+        <div class="area-card" style="border-left:4px solid #ef4444; background:#fff1f1">
+          <div class="area-header">
+            <h3 class="area-name">📍 Master Bedroom</h3>
+            <span class="severity-badge" style="background:#ef4444">High</span>
+          </div>
+
+          <div class="area-section">
+            <p class="section-label">🔍 Observed Issues</p>
+            <ul><li>Dampness at skirting level</li><li>Cracks on the External wall</li></ul>
+          </div>
+
+          <div class="area-section thermal-box">
+            <p class="section-label">🌡️ Thermal Evidence</p>
+            <p>Not Available</p>
+          </div>
+
+          <div class="area-section">
+            <p class="section-label">⚠️ Severity Reason</p>
+            <p>The combination of dampness and external wall cracks poses a significant risk to the structural integrity of the building.</p>
+          </div>
+
+          <div class="area-section image-note">
+            <p class="section-label">🖼️ Images</p>
+            <p>Not Available</p>
+          </div>
+        </div>
+        
+    </div>
+
+    <!-- 3. Root Cause Analysis -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">3</span>
+        Root Cause Analysis
+      </div>
+      <div class="root-cause-box">
+        The issues observed in the property are primarily caused by water seepage and leakage, which are exacerbated by gaps in tile joints, loose plumbing, and potential structural weaknesses. The thermal report, although not directly applicable to these specific issues, highlights the importance of maintaining a watertight envelope to prevent heat loss and moisture ingress. The inspection report's findings, combined with the thermal data, suggest that addressing these issues promptly is crucial to preventing further damage and ensuring the property's longevity.
+      </div>
+    </div>
+
+    <!-- 4. Priority Matrix -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">4</span>
+        Priority Matrix
+      </div>
+      <div class="priority-grid">
+        <div class="priority-col high">
+          <div class="priority-heading">🔴 High Priority</div>
+          <ul><li><span class="dot" style="background:#ef4444">🔴</span>Dampness and leakage issues in multiple areas</li><li><span class="dot" style="background:#ef4444">🔴</span>Gaps between tile joints and loose plumbing joints in bathrooms</li></ul>
+        </div>
+        <div class="priority-col medium">
+          <div class="priority-heading">🟡 Medium Priority</div>
+          <ul><li><span class="dot" style="background:#f59e0b">🟡</span>Cracks on the External wall near Master Bedroom</li></ul>
+        </div>
+        <div class="priority-col low">
+          <div class="priority-heading">🟢 Low Priority</div>
+          <ul><li><span class="dot" style="background:#22c55e">🟢</span>Mild dampness at the ceiling of Common Bathroom</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Recommended Action Plan -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">5</span>
+        Recommended Action Plan
+      </div>
+      
+        <div class="action-step">
+          <div class="step-num">1</div>
+          <div class="step-text">Conduct a thorough investigation to identify the sources of water seepage and leakage.</div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">2</div>
+          <div class="step-text">Seal all gaps between tile joints and address loose plumbing joints.</div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">3</div>
+          <div class="step-text">Assess and repair any structural damage to the External wall.</div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">4</div>
+          <div class="step-text">Implement measures to prevent future water ingress, such as improving roof drainage and sealing any cracks or gaps.</div>
+        </div>
+        <div class="action-step">
+          <div class="step-num">5</div>
+          <div class="step-text">Monitor the property for any signs of further damage or issues.</div>
+        </div>
+    </div>
+
+    <!-- 6. Additional Insights -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">6</span>
+        Additional Insights
+      </div>
+      <div class="insights-box">
+        The repeated observations of dampness and leakage issues across multiple areas suggest a systemic problem that requires a comprehensive approach to resolve. The presence of gaps between tile joints and loose plumbing joints in bathrooms highlights the need for regular maintenance and inspection. The structural concerns posed by the cracks on the External wall necessitate prompt attention to prevent potential safety hazards.
+      </div>
+    </div>
+
+    <!-- 7. Missing / Unclear Data -->
+    <div class="section">
+      <div class="section-title">
+        <span class="section-num">7</span>
+        Missing / Unclear Data
+      </div>
+      <div class="missing-box">
+        Thermal data specific to the observed issues was not available, and some details regarding the property's maintenance history and previous repairs were unclear or not provided.
+      </div>
+    </div>
+
+  </div><!-- /body -->
+
+  <!-- ═══════════════════════════════════════ FOOTER -->
+  <div class="footer">
+    <strong>UrbanRoof</strong> — Building Diagnostics &amp; Inspection &nbsp;|&nbsp;
+    Report generated on 01 April 2026 &nbsp;|&nbsp;
+    This report is AI-assisted. All findings should be verified by a licensed engineer before action.
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
